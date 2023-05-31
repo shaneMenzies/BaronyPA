@@ -6,26 +6,26 @@ A mumble plugin that adds positional audio support for Barony.
 <details>
 <summary>Windows</summary>
 
-1. Get the Mumble Plugin file from [Releases](https://github.com/shaneMenzies/BaronyPA/releases), and open it with Mumble.  
+- Method 1: Get the Mumble Plugin file from [Releases](https://github.com/shaneMenzies/BaronyPA/releases), and open it with Mumble.  
 
-![Opening in Mumble](images/Windows_mumble_plugin_open.png)  
+  ![Opening in Mumble](images/Windows_mumble_plugin_open.png)  
 
-2. Place the compiled baronyPA.dll file in your Mumble plugin directory (%appdata%/Mumble/Plugins).  
+- Method 2: Place the compiled baronyPA.dll file in your Mumble plugin directory (%appdata%/Mumble/Plugins).  
 
-![dll File](images/windows_dll.PNG)
-![Plugin Directory](images/Windows_plugins_location.png)  
+  ![dll File](images/windows_dll.png)
+  ![Plugin Directory](images/Windows_plugins_location.png)  
 
 </details>
 <details>
 <summary>Linux</summary>
 
-1. Get the Mumble Plugin file from [Releases](https://github.com/shaneMenzies/BaronyPA/releases), and select it in Mumble's "Install plugin..." dialog.  
+- Method 1: Get the Mumble Plugin file from [Releases](https://github.com/shaneMenzies/BaronyPA/releases), and select it in Mumble's "Install plugin..." dialog.  
 
-![Mumble Plugin Install](images/Linux_mumble_install.png)  
+  ![Mumble Plugin Install](images/Linux_mumble_install.png)  
 
-2. Place the compiled libbaronyPA.so file in your Mumble plugin directory (~/.local/share/Mumble/Mumble/Plugins)
+- Method 2: Place the compiled libbaronyPA.so file in your Mumble plugin directory (~/.local/share/Mumble/Mumble/Plugins)
 
-![Plugin Directory](images/Linux_plugin_in_local.png)  
+  ![Plugin Directory](images/Linux_plugin_in_local.png)  
 
 </details>
 
@@ -52,11 +52,11 @@ Once Barony is opened, there should be another message telling you that the plug
 
 2. Use CMake to generate NMake Makefiles.  
 
-![CMake Run](images/Windows_cmake_cmd.png)  
+  ![CMake Run](images/Windows_cmake_cmd.png)  
 
 3. Build the plugin using NMake  
 
-![NMake Build](images/Windows_cmake_built.png)  
+  ![NMake Build](images/Windows_cmake_built.png)  
 
 </details>
 <details>
@@ -64,11 +64,11 @@ Once Barony is opened, there should be another message telling you that the plug
 
 1. Use CMake to generate the Makefile  
 
-![Cmake Run](images/Linux_cmake_cmd.png)  
+  ![Cmake Run](images/Linux_cmake_cmd.png)  
 
 2. Build the plugin using Make  
 
-![Make Build](images/Linux_cmake_built.png)
+  ![Make Build](images/Linux_cmake_built.png)
 
 </details>
 
