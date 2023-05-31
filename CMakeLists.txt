@@ -6,11 +6,11 @@ project(BaronyPA
         LANGUAGES "C"
         )
 
-add_library(plugin
+add_library(baronyPA
         SHARED
         plugin.c
         )
 
-target_include_directories(plugin
+target_include_directories(baronyPA
         PUBLIC "${CMAKE_SOURCE_DIR}/include/"
         )

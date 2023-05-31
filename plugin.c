@@ -19,15 +19,24 @@
 #include <math.h>
 
 #define PLUGIN_NAME "BaronyPA"
-#define PLUGIN_VERSION "0.1.0"
+#define PLUGIN_VERSION "0.1.1"
 
-#define POS_OFFSET 0x2e4fd8
+#define BARONY_STABLE_VERSION "v3.3.7"
+#define BARONY_STABLE_DEFAULT_BASE 0x400000
+#define BARONY_STABLE_VERSION_OFFSET 0x2a6948
+#define BARONY_STABLE_POS_OFFSET 0x2e4fd8
+
+#define BARONY_BETA_VERSION "v3.9.1"
+#define BARONY_BETA_DEFAULT_BASE 0x140000000
+#define BARONY_BETA_VERSION_OFFSET 0x65eed0
+#define BARONY_BETA_POS_OFFSET 0x8a7280
 
 struct MumbleAPI_v_1_0_x mumbleAPI;
 mumble_plugin_id_t ownID;
 
 uint64_t baronyBaseAddr;
 uint64_t baronyPID;
+bool beta = false;
 bool active = false;
 struct baronyPosValue {
     double z;
@@ -78,21 +87,57 @@ uint8_t mumble_initPositionalData(const char *const *programNames, const uint64_
             mumbleAPI.log(ownID, "Found Barony:");
             mumbleAPI.log(ownID, programNames[i]);
 
-            // On Windows we need to open the Barony process
             #if defined(_WIN32)
-            baronyWinHandle = OpenProcess(PROCESS_VM_READ | PROCESS_QUERY_INFORMATION, false, baronyPID);
+                // On Windows we need to open the Barony process
+                baronyWinHandle = OpenProcess(PROCESS_VM_READ | PROCESS_QUERY_INFORMATION, false, baronyPID);
 
-            // Also need to determine base address
-            HMODULE moduleBuffer[1024];
-            DWORD bytesNeeded = 0;
-            EnumProcessModules(baronyWinHandle, moduleBuffer, sizeof(moduleBuffer), &bytesNeeded);
-            baronyBaseAddr = (uint64_t) moduleBuffer[0];
+                // Also need to determine base address
+                HMODULE moduleBuffer[1024];
+                DWORD bytesNeeded = 0;
+                EnumProcessModules(baronyWinHandle, moduleBuffer, sizeof(moduleBuffer), &bytesNeeded);
+                baronyBaseAddr = (uint64_t) moduleBuffer[0];
 
+                // Check the version
+                size_t bytesRead = 0;
+                char buffer[64];
+                void* baronyAddr = (void*)(baronyBaseAddr + BARONY_STABLE_VERSION_OFFSET);
+                bool failed = (ReadProcessMemory(baronyWinHandle, baronyAddr, buffer, sizeof(BARONY_STABLE_VERSION), &bytesRead) == 0);
+                failed = failed || (bytesRead < sizeof(BARONY_STABLE_VERSION));
+
+                // Stable version check
+                if (failed || (strcmp(buffer, BARONY_STABLE_VERSION) != 0)) {
+                    // Not stable, assume beta
+                    beta = true;
+                } else {
+                    beta = false;
+                }
             #elif defined(__linux__)
-            baronyBaseAddr = 0x400000;
+                // Linux doesn't need to open first
+                baronyBaseAddr = BARONY_STABLE_DEFAULT_BASE;
+
+                // Check the version
+                ssize_t bytesRead = 0;
+                char buffer[64];
+                void* baronyAddr = (void*)(baronyBaseAddr + BARONY_STABLE_VERSION_OFFSET);
+                struct iovec local_iov = {buffer, sizeof(BARONY_STABLE_VERSION)};
+                struct iovec remote_iov = {baronyAddr, sizeof(BARONY_STABLE_VERSION)};
+
+                bytesRead = process_vm_readv(baronyPID, &local_iov, 1, &remote_iov, 1, 0);
+                bool failed = (bytesRead < sizeof(BARONY_STABLE_VERSION));
+
+                // Stable version check
+                if (failed || (strcmp(buffer, BARONY_STABLE_VERSION) != 0)) {
+                    // Not stable, assume beta
+                    beta = true;
+                    baronyBaseAddr = BARONY_BETA_DEFAULT_BASE;
+                } else {
+                    beta = false;
+                }
             #endif
 
-            // Linux doesn't need to open first
+            if (beta) {
+                    mumbleAPI.log(ownID, "Detected as Beta Version");
+            }
 
             // Mumble will now start calling mumble_fetchPositionalData
             active = true;
@@ -107,7 +152,7 @@ uint8_t mumble_initPositionalData(const char *const *programNames, const uint64_
 // Helper function that grabs the Positional data from the Barony process
 bool getBaronyPos(struct baronyPosValue* target) {
 
-    void *baronyAddr = (void*)(baronyBaseAddr + POS_OFFSET);
+    void *baronyAddr = (void*)(baronyBaseAddr + (beta ? BARONY_BETA_POS_OFFSET : BARONY_STABLE_POS_OFFSET));
 
     // Method differs between Windows and Linux
     #if defined(_WIN32)
@@ -189,7 +234,7 @@ bool mumble_fetchPositionalData(float *avatarPos, float *avatarDir, float *avata
     avatarPos[2] = cameraPos[2] = value.z;
 
     // Need to get direction from Barony's angles (also needs to be a unit vector)
-    float dirY = -sin(value.vert_angle);
+    double dirY = -sin(value.vert_angle);
     float magnitude = sqrt(1 + (dirY * dirY));
 
     avatarDir[0] = cameraDir[0] = sin(value.horiz_angle) / magnitude;
@@ -205,9 +250,13 @@ bool mumble_fetchPositionalData(float *avatarPos, float *avatarDir, float *avata
     static const char *contextString = "BaronyPA";
     *context = contextString;
 
+    /*
+     * Mumble doesn't seem to have a positional audio viewer on Windows,
+     * but this works instead. It just prints the values in to the console.
     char buffer[256];
     sprintf(buffer, "Pos: (%.1f, %.1f, %.1f) Dir: (%.1f, %.1f, %.1f)", avatarPos[0], avatarPos[1], avatarPos[2], avatarDir[0], avatarDir[1], avatarDir[2]);
     mumbleAPI.log(ownID, buffer);
+    */
 
     return true;
 }
@@ -236,7 +285,7 @@ struct MumbleStringWrapper mumble_getName() {
 }
 
 mumble_version_t mumble_getVersion() {
-    static const mumble_version_t version = {0, 1, 0};
+    static const mumble_version_t version = {0, 1, 1};
     return version;
 }
 
