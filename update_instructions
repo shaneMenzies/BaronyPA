@@ -1,0 +1,7 @@
+search -> "/inventorynew"
+find command entry ("/heal", ..., inv_new_command)
+go to inv_new_command
+find messagePlayer(clientnum)
+save clientnum location
+find for loop that goes through players, initial player is players
+search for version string, save location

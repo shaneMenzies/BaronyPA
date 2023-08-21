@@ -1,4 +1,4 @@
-// Copyright 2021-2023 The Mumble Developers. All rights reserved.
+// Copyright 2021 The Mumble Developers. All rights reserved.
 // Use of this source code is governed by a BSD-style license
 // that can be found in the LICENSE file at the root of the
 // Mumble source tree or at <https://www.mumble.info/LICENSE>.
@@ -24,17 +24,6 @@
 #	error No PLUGIN_EXPORT definition available
 #endif
 
-
-// Plugin functions version
-#define MUMBLE_PLUGIN_FUNCTIONS_MAJOR_MACRO 1
-#define MUMBLE_PLUGIN_FUNCTIONS_MINOR_MACRO 0
-#define MUMBLE_PLUGIN_FUNCTIONS_PATCH_MACRO 1
-
-const int32_t MUMBLE_PLUGIN_FUNCTIONS_MAJOR            = MUMBLE_PLUGIN_FUNCTIONS_MAJOR_MACRO;
-const int32_t MUMBLE_PLUGIN_FUNCTIONS_MINOR            = MUMBLE_PLUGIN_FUNCTIONS_MINOR_MACRO;
-const int32_t MUMBLE_PLUGIN_FUNCTIONS_PATCH            = MUMBLE_PLUGIN_FUNCTIONS_PATCH_MACRO;
-const mumble_version_t MUMBLE_PLUGIN_FUNCTIONS_VERSION = { MUMBLE_PLUGIN_FUNCTIONS_MAJOR_MACRO, MUMBLE_PLUGIN_FUNCTIONS_MINOR_MACRO,
-														   MUMBLE_PLUGIN_FUNCTIONS_PATCH_MACRO };
 
 #ifdef __cplusplus
 extern "C" {

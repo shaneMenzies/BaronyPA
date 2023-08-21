@@ -1,40 +1,37 @@
-// Copyright 2021-2023 The Mumble Developers. All rights reserved.
+// Copyright 2021 The Mumble Developers. All rights reserved.
 // Use of this source code is governed by a BSD-style license
 // that can be found in the LICENSE file at the root of the
 // Mumble source tree or at <https://www.mumble.info/LICENSE>.
 
 /// This header file contains the definition of Mumble's API
 
-#ifndef EXTERNAL_MUMBLE_PLUGIN_API_1_0_x_H_
-#define EXTERNAL_MUMBLE_PLUGIN_API_1_0_x_H_
+#ifndef EXTERNAL_MUMBLE_PLUGIN_API_H_
+#define EXTERNAL_MUMBLE_PLUGIN_API_H_
 
 #include "PluginComponents_v_1_0_x.h"
 #include <stdint.h>
 
 
-#ifndef EXTERNAL_MUMBLE_PLUGIN_API_NO_AUXILIARY_DEFINITIONS
-
 // API version
-#	define MUMBLE_PLUGIN_API_MAJOR_MACRO 1
-#	define MUMBLE_PLUGIN_API_MINOR_MACRO 0
-#	define MUMBLE_PLUGIN_API_PATCH_MACRO 3
+#define MUMBLE_PLUGIN_API_MAJOR_MACRO 1
+#define MUMBLE_PLUGIN_API_MINOR_MACRO 0
+#define MUMBLE_PLUGIN_API_PATCH_MACRO 0
 
 const int32_t MUMBLE_PLUGIN_API_MAJOR            = MUMBLE_PLUGIN_API_MAJOR_MACRO;
 const int32_t MUMBLE_PLUGIN_API_MINOR            = MUMBLE_PLUGIN_API_MINOR_MACRO;
 const int32_t MUMBLE_PLUGIN_API_PATCH            = MUMBLE_PLUGIN_API_PATCH_MACRO;
-const mumble_version_t MUMBLE_PLUGIN_API_VERSION = { MUMBLE_PLUGIN_API_MAJOR_MACRO, MUMBLE_PLUGIN_API_MINOR_MACRO,
-													 MUMBLE_PLUGIN_API_PATCH_MACRO };
+const mumble_version_t MUMBLE_PLUGIN_API_VERSION = { MUMBLE_PLUGIN_API_MAJOR, MUMBLE_PLUGIN_API_MINOR,
+													 MUMBLE_PLUGIN_API_PATCH };
 
 // Create macro for casting the pointer to the API object to the proper struct.
 // Note that this must only be used if the API uses MUMBLE_PLUGIN_API_VERSION of the API.
-#	define MUMBLE_CONCAT_HELPER(a, b) a##_##b
-#	define MUMBLE_CONCAT(a, b) MUMBLE_CONCAT_HELPER(a, b)
-#	define MUMBLE_API_STRUCT      \
-		MUMBLE_CONCAT(MumbleAPI_v, \
-					  MUMBLE_CONCAT(MUMBLE_PLUGIN_API_MAJOR_MACRO, MUMBLE_CONCAT(MUMBLE_PLUGIN_API_MINOR_MACRO, x)))
-#	define MUMBLE_API_CAST(ptrName) (*((struct MUMBLE_API_STRUCT *) ptrName))
+#define MUMBLE_CONCAT_HELPER(a, b) a##_##b
+#define MUMBLE_CONCAT(a, b) MUMBLE_CONCAT_HELPER(a, b)
+#define MUMBLE_API_STRUCT      \
+	MUMBLE_CONCAT(MumbleAPI_v, \
+				  MUMBLE_CONCAT(MUMBLE_PLUGIN_API_MAJOR_MACRO, MUMBLE_CONCAT(MUMBLE_PLUGIN_API_MINOR_MACRO, x)))
+#define MUMBLE_API_CAST(ptrName) (*((struct MUMBLE_API_STRUCT *) ptrName))
 
-#endif // EXTERNAL_MUMBLE_PLUGIN_API_NO_AUXILIARY_DEFINITIONS
 
 struct MumbleAPI_v_1_0_x {
 	/////////////////////////////////////////////////////////
@@ -530,8 +527,4 @@ struct MumbleAPI_v_1_0_x {
 	mumble_error_t(PLUGIN_CALLING_CONVENTION *playSample)(mumble_plugin_id_t callerID, const char *samplePath);
 };
 
-#ifndef EXTERNAL_MUMBLE_PLUGIN_API_NO_AUXILIARY_DEFINITIONS
-typedef struct MumbleAPI_v_1_0_x mumble_api_t;
-#endif
-
-#endif // EXTERNAL_MUMBLE_PLUGIN_API_1_0_x_H_
+#endif // EXTERNAL_MUMBLE_PLUGIN_API_H_
