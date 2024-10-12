@@ -17,8 +17,10 @@
 #include <string.h>
 #include <math.h>
 
+// #define DEBUG 1
+
 #define PLUGIN_NAME    "BaronyPA"
-#define PLUGIN_VERSION "0.1.2"
+#define PLUGIN_VERSION "0.1.3"
 
 #define BARONY_LEGACY_VERSION           "v3.3.7"
 #define BARONY_LEGACY_DEFAULT_BASE      0x400000
@@ -26,11 +28,11 @@
 #define BARONY_LEGACY_CLIENT_NUM_OFFSET 0
 #define BARONY_LEGACY_PLAYERS_OFFSET    0
 
-#define BARONY_STABLE_VERSION           "v4.0.2"
+#define BARONY_STABLE_VERSION           "v4.2.1"
 #define BARONY_STABLE_DEFAULT_BASE      0x140000000
-#define BARONY_STABLE_VERSION_OFFSET    0x70ff30
-#define BARONY_STABLE_CLIENT_NUM_OFFSET 0x7f4a48
-#define BARONY_STABLE_PLAYERS_OFFSET    0x8375a8
+#define BARONY_STABLE_VERSION_OFFSET    0x7f2ca0
+#define BARONY_STABLE_CLIENT_NUM_OFFSET 0x8ee76c
+#define BARONY_STABLE_PLAYERS_OFFSET    0x930a98
 
 enum offset_index {
     OFFSET_VERSION,
@@ -323,11 +325,11 @@ bool mumble_fetchPositionalData(float* avatarPos, float* avatarDir,
         const static char contextString[] = "BaronyPA";
         *context                    = contextString;
 
+#ifdef DEBUG
         /*
          * Mumble doesn't seem to have a positional audio viewer on Windows,
          * but this works instead. It just prints the values in to the console.
          */
-
         static int interval = 0;
         interval++;
         if (interval >= 16) {
@@ -337,6 +339,7 @@ bool mumble_fetchPositionalData(float* avatarPos, float* avatarDir,
                 avatarDir[1], avatarDir[2]); mumbleAPI.log(ownID, buffer);
             interval = 0;
         }
+#endif
 
         return true;
 }
