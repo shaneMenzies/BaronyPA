@@ -1,7 +1,44 @@
-search -> "/inventorynew"
-find command entry ("/heal", ..., inv_new_command)
-go to inv_new_command
-find messagePlayer(clientnum)
-save clientnum location
-find for loop that goes through players, initial player is players
-search for version string, save location
+Barony source repository: https://github.com/TurningWheel/Barony
+
+Decompilation tool: https://ghidra-sre.org/
+
+Open barony.exe in Ghidra
+
+Need to find 3 variable locations:
+Barony version string: c-string / char*
+clientnum: int / Sint32
+players: Player* players[MAX_PLAYERS]
+
+1. Version string:
+Look at the title screen of the game, take the first 3 numbers (ex. "v4.2.1"), that is BARONY_STABLE_VERSION,
+then use Ghidra's string search to find the first occurence of that.
+
+Copy the address of the first occurence, subtract the DEFAULT_BASE (0x140000000), and that is BARONY_STABLE_VERSION_OFFSET
+
+
+2. clientnum:
+Search the barony source code for a use of messagePlayer and clientnum, "messagePlayer(clientnum"
+Find a use in one of the console command functions, these are mostly inline functions
+
+Search using Ghidra's string search for the string corresponding to the command (ex. "/test_rng_i8"),
+then find where that string gets used. It should be in a structure somewhere followed by another string
+for the command description (ex. "test rng i8"), and then a pointer to the function
+that command calls. Go to that function
+
+Fix the function signature to have the proper types (ex. void test_rng_i8(int argc, char** argv)),
+and try and track down the call to messagePlayer using the format string, 
+(ex. messagePlayer(clientnum, MESSAGE_MISC, "mean: %.2f", sum), can use "mean: %.2f" to help find the call),
+and since the first argument is clientnum, copy that address, subtract the DEFAULT_BASE again, and that is BARONY_STABLE_CLIENT_NUM_OFFSET
+
+
+3. players:
+Once again find a command in the barony source code, this time one that uses the players array,
+such as "/inventorynew", and find the function it calls in the exe again.
+
+In the case of "/inventorynew" it uses a for loop over all the players,
+which usually gets compiled to 2 variables that both get incremented, one
+for i (which gets 1 added each loop), and one for players (which gets 8 added each loop), 
+so players is the initial value of the second variable.
+
+Copy the address of players, subtract DEFAULT_BASE, and that is BARONY_STABLE_PLAYERS_OFFSET
+
