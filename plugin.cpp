@@ -20,7 +20,7 @@
 // #define DEBUG 1
 
 #define PLUGIN_NAME    "BaronyPA"
-#define PLUGIN_VERSION "0.1.3"
+#define PLUGIN_VERSION "0.1.4"
 
 #define BARONY_LEGACY_VERSION           "v3.3.7"
 #define BARONY_LEGACY_DEFAULT_BASE      0x400000

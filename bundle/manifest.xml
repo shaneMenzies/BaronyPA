@@ -5,5 +5,5 @@
     <plugin os="linux" arch="x64">libbaronyPA.so</plugin>
   </assets>
   <name>BaronyPA</name>
-  <version>0.1.1</version>
+  <version>0.1.4</version>
 </bundle>
